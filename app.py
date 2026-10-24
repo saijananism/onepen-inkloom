@@ -145,7 +145,7 @@ with tabs[0]:
                 st.markdown(f"**Why flagged:** {f['explanation']}")
                 st.markdown(f"**Guideline:** {f['source']}")
                 st.markdown(f"**Suggested correction:** {f['suggestion']}")
-                                decision = st.selectbox("Decision", ["Open", "Accepted", "Rejected", "Needs human review"], key=f"d{f['id']}")
+                decision = st.selectbox("Decision", ["Open", "Accepted", "Rejected", "Needs human review"], key=f"d{f['id']}")
                 if st.button("Save decision", key=f"s{f['id']}"):
                     con.execute("UPDATE findings SET status=? WHERE id=?", (decision, f["id"]))
                     con.execute("INSERT INTO events(submission_id,actor,action,details,created_at) VALUES(?,?,?,?,?)",
