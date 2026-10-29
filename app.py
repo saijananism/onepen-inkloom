@@ -56,6 +56,7 @@ st.markdown("""
         border-radius: 10px 10px 0 0;
         padding: 10px 20px;
         font-weight: 600;
+        color: #1a237e !important;
     }
     .stTabs [aria-selected="true"] {
         background: #1a237e;
