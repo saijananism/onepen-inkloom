@@ -67,6 +67,12 @@ st.markdown("""
         border: 1px solid #e0e0e0;
         background: white;
     }
+    .stTabs [data-baseweb="tab"] p {
+        color: #1a237e !important;
+    }
+    .stTabs [aria-selected="true"] p {
+        color: white !important;
+    }
 </style>
 """, unsafe_allow_html=True)
 
