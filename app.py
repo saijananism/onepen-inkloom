@@ -182,7 +182,11 @@ with tabs[0]:
         response = model.generate_content(prompt)
         st.subheader("AI-suggested rewrite")
         st.write(response.text)
-
+    if st.button("🧠 Run AI semantic review"):
+        with st.spinner("Gemini is reviewing meaning, tone, and compliance risk..."):
+            result = ai_semantic_review(content)
+        st.subheader("🧠 AI semantic review")
+        st.write(result)
     if "last" in st.session_state:
         sid = st.session_state.last
         con = db()
