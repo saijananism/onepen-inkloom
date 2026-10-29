@@ -61,6 +61,9 @@ init_db()
 if "auth" not in st.session_state:
     st.session_state.auth = False
 
+if "role" not in st.session_state:
+    st.session_state.role = "Creator"
+
 USERS = {
     "creator": {"password": "creator2026", "role": "Creator"},
     "reviewer": {"password": "reviewer2026", "role": "Reviewer"},
