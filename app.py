@@ -134,7 +134,7 @@ with tabs[0]:
         con.close()
         st.session_state.last = sid
         st.success(f"Review complete. Submission ID: {sid}")
-                if st.button("🤖 Suggest AI-safe rewrite"):
+    if st.button("🤖 Suggest AI-safe rewrite"):
         prompt = f"""
         Rewrite the following brand content to be safe, professional, and compliant.
         Remove absolute guarantees and unsupported claims.
