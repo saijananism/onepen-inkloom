@@ -61,17 +61,26 @@ init_db()
 if "auth" not in st.session_state:
     st.session_state.auth = False
 
+USERS = {
+    "creator": {"password": "creator2026", "role": "Creator"},
+    "reviewer": {"password": "reviewer2026", "role": "Reviewer"},
+    "admin": {"password": "admin2026", "role": "Admin"},
+}
+
 if not st.session_state.auth:
     st.title("🛡️ Inkloom AI")
     st.caption("Intelligent brand governance before publication — Team ONEPEN")
-    password = st.text_input("Enter access password", type="password")
+    username = st.text_input("Username")
+    password = st.text_input("Password", type="password")
     if st.button("Sign in"):
-        if password == APP_PASSWORD:
+        user = USERS.get(username.lower())
+        if user and password == user["password"]:
             st.session_state.auth = True
+            st.session_state.role = user["role"]
             st.rerun()
         else:
-            st.error("Incorrect password")
-    st.info("Demo password: onepen2026")
+            st.error("Incorrect username or password")
+    st.info("Demo logins: creator / creator2026, reviewer / reviewer2026, admin / admin2026")
     st.stop()
 
 tabs = st.tabs(["📝 Review content", "📚 Brand knowledge", "✅ Approvals", "📊 Insights"])
