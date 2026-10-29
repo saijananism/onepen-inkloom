@@ -295,7 +295,19 @@ with tabs[2]:
                              datetime.datetime.utcnow().isoformat()))
                 con.commit()
                 st.rerun()
+            if s["status"] == "Approved" and st.session_state.role in ["Reviewer", "Admin"]:
+                if st.button("🚀 Mark as ready for publishing", key=f"p{s['id']}"):
+                    con.execute("UPDATE submissions SET status='Ready for publishing', updated_at=? WHERE id=?",
+                                (datetime.datetime.utcnow().isoformat(), s["id"]))
+                    con.execute("INSERT INTO events(submission_id,actor,action,details,created_at) VALUES(?,?,?,?,?)",
+                                (s["id"], st.session_state.role, "Marked ready for publishing",
+                                 "Approved content cleared for publishing",
+                                 datetime.datetime.utcnow().isoformat()))
+                    con.commit()
+                    st.rerun()
 
+            if s["status"] == "Ready for publishing":
+                st.success("✅ This content is approved and ready for publishing.")
             if c.button("Audit trail", key=f"t{s['id']}"):
                 for e in con.execute("SELECT * FROM events WHERE submission_id=? ORDER BY created_at",
                                      (s["id"],)).fetchall():
