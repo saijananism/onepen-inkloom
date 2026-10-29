@@ -56,22 +56,23 @@ st.markdown("""
         border-radius: 10px 10px 0 0;
         padding: 10px 20px;
         font-weight: 600;
+        background: white;
+    }
+    .stTabs [data-baseweb="tab"] p,
+    .stTabs [data-baseweb="tab"] span {
         color: #1a237e !important;
     }
     .stTabs [aria-selected="true"] {
         background: #1a237e;
+    }
+    .stTabs [aria-selected="true"] p,
+    .stTabs [aria-selected="true"] span {
         color: white !important;
     }
     div[data-testid="stExpander"] {
         border-radius: 12px;
         border: 1px solid #e0e0e0;
         background: white;
-    }
-    .stTabs [data-baseweb="tab"] p {
-        color: #1a237e !important;
-    }
-    .stTabs [aria-selected="true"] p {
-        color: white !important;
     }
 </style>
 """, unsafe_allow_html=True)
