@@ -248,7 +248,7 @@ with tabs[2]:
 
             a, b, c = st.columns(3)
 
-            if a.button("Approve", key=f"a{s['id']}"):
+            if a.button("Approve", key=f"a{s['id']}", disabled=st.session_state.role not in ["Reviewer", "Admin"]):
                 if high_risk > 0:
                     st.error("Resolve high-severity findings first.")
                 else:
@@ -260,7 +260,7 @@ with tabs[2]:
                     con.commit()
                     st.rerun()
 
-            if b.button("Request changes", key=f"r{s['id']}"):
+            if b.button("Request changes", key=f"r{s['id']}", disabled=st.session_state.role not in ["Reviewer", "Admin"]):
                 con.execute("UPDATE submissions SET status='Changes requested', updated_at=? WHERE id=?",
                             (datetime.datetime.utcnow().isoformat(), s["id"]))
                 con.execute("INSERT INTO events(submission_id,actor,action,details,created_at) VALUES(?,?,?,?,?)",
