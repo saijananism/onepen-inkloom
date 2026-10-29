@@ -31,51 +31,6 @@ DB = "inkloom.db"
 APP_PASSWORD = os.getenv("APP_PASSWORD", "onepen2026")
 
 st.set_page_config(page_title="Inkloom AI", page_icon="🛡️", layout="wide")
-st.markdown("""
-<style>
-    .stApp {
-        background: linear-gradient(180deg, #f8fafc 0%, #eef2ff 100%);
-    }
-    h1 {
-        color: #1a237e !important;
-        font-weight: 800 !important;
-    }
-    .stButton > button {
-        border-radius: 10px;
-        font-weight: 600;
-        border: none;
-    }
-    .stButton > button[kind="primary"] {
-        background: linear-gradient(90deg, #1a237e, #3949ab);
-        color: white;
-    }
-    .stTabs [data-baseweb="tab-list"] {
-        gap: 8px;
-    }
-    .stTabs [data-baseweb="tab"] {
-        border-radius: 10px 10px 0 0;
-        padding: 10px 20px;
-        font-weight: 600;
-        background: white;
-    }
-    .stTabs [data-baseweb="tab"] p,
-    .stTabs [data-baseweb="tab"] span {
-        color: #1a237e !important;
-    }
-    .stTabs [aria-selected="true"] {
-        background: #1a237e;
-    }
-    .stTabs [aria-selected="true"] p,
-    .stTabs [aria-selected="true"] span {
-        color: white !important;
-    }
-    div[data-testid="stExpander"] {
-        border-radius: 12px;
-        border: 1px solid #e0e0e0;
-        background: white;
-    }
-</style>
-""", unsafe_allow_html=True)
 
 def db():
     con = sqlite3.connect(DB)
