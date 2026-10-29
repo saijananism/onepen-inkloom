@@ -143,7 +143,7 @@ with tabs[0]:
         Content:
         {content}
         """
-        model = genai.GenerativeModel("gemini-1.5-flash")
+        model = genai.GenerativeModel("gemini-3.8-flash")
         response = model.generate_content(prompt)
         st.subheader("AI-suggested rewrite")
         st.write(response.text)
