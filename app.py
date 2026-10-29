@@ -134,6 +134,19 @@ with tabs[0]:
         con.close()
         st.session_state.last = sid
         st.success(f"Review complete. Submission ID: {sid}")
+                if st.button("🤖 Suggest AI-safe rewrite"):
+            prompt = f"""
+            Rewrite the following brand content to be safe, professional, and compliant.
+            Remove absolute guarantees and unsupported claims.
+            Use evidence-based language. Keep the same meaning.
+
+            Content:
+            {content}
+            """
+            model = genai.GenerativeModel("gemini-1.5-flash")
+            response = model.generate_content(prompt)
+            st.subheader("AI-suggested rewrite")
+            st.write(response.text)
 
     if "last" in st.session_state:
         sid = st.session_state.last
