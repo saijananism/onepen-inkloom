@@ -2,6 +2,29 @@ import streamlit as st
 import google.generativeai as genai
 
 genai.configure(api_key=st.secrets["GEMINI_API_KEY"])
+def ai_semantic_review(content):
+    prompt = f"""
+    You are a brand-governance reviewer for Inkloom AI.
+    Review the following marketing content for:
+    1. Misleading or unsupported claims
+    2. Absolute guarantees or overpromising
+    3. Tone or brand-voice issues
+    4. Accessibility or clarity issues
+
+    For each issue found, output:
+    - Severity: High, Medium, or Low
+    - Issue: short title
+    - Why flagged: explanation based on meaning and context
+    - Suggested fix: specific improved wording
+
+    If there are no issues, say "No significant governance issues found."
+
+    Content:
+    {content}
+    """
+    model = genai.GenerativeModel("gemini-3.8-flash")
+    response = model.generate_content(prompt)
+    return response.text
 import sqlite3, os, re, datetime, uuid
 
 DB = "inkloom.db"
