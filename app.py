@@ -49,6 +49,34 @@ def compliance_score(sid):
     con.commit()
     con.close()
     return score
+    def generate_pdf_report(sid):
+    from fpdf import FPDF
+    con = db()
+    s = con.execute("SELECT * FROM submissions WHERE id=?", (sid,)).fetchone()
+    findings = con.execute("SELECT * FROM findings WHERE submission_id=?", (sid,)).fetchall()
+    con.close()
+
+    pdf = FPDF()
+    pdf.add_page()
+    pdf.set_font("Helvetica", "B", 16)
+    pdf.cell(0, 10, "Inkloom AI - Compliance Report", ln=True)
+    pdf.set_font("Helvetica", "", 11)
+    pdf.cell(0, 8, f"Submission: {s['title']}", ln=True)
+    pdf.cell(0, 8, f"Type: {s['content_type']} | Status: {s['status']}", ln=True)
+    pdf.cell(0, 8, f"Compliance Score: {s['score'] if s['score'] is not None else 100}/100", ln=True)
+    pdf.ln(5)
+    pdf.set_font("Helvetica", "B", 12)
+    pdf.cell(0, 8, "Findings", ln=True)
+    pdf.set_font("Helvetica", "", 10)
+    if not findings:
+        pdf.cell(0, 8, "No issues found.", ln=True)
+    for f in findings:
+        pdf.multi_cell(0, 7, f"[{f['severity']}] {f['category']}: {f['explanation']}")
+        pdf.multi_cell(0, 7, f"Fix: {f['suggestion']}")
+        pdf.ln(2)
+    path = f"report_{sid}.pdf"
+    pdf.output(path)
+    return path
 def db():
     con = sqlite3.connect(DB)
     con.row_factory = sqlite3.Row
@@ -199,6 +227,11 @@ with tabs[0]:
         st.markdown(f"## Compliance Score: <span style='color:{color}'>{score}/100</span>",
                     unsafe_allow_html=True)
         st.success(f"Review complete. Submission ID: {sid}")
+        pdf_path = generate_pdf_report(sid)
+        with open(pdf_path, "rb") as f:
+            st.download_button("📄 Download Compliance Report (PDF)", f,
+                               file_name=f"inkloom_report_{sid}.pdf",
+                               mime="application/pdf")
     if st.button("🤖 Suggest AI-safe rewrite"):
         prompt = f"""
         Rewrite the following brand content to be safe, professional, and compliant.
