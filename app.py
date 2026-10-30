@@ -31,7 +31,24 @@ DB = "inkloom.db"
 APP_PASSWORD = os.getenv("APP_PASSWORD", "onepen2026")
 
 st.set_page_config(page_title="Inkloom AI", page_icon="🛡️", layout="wide")
-
+def compliance_score(sid):
+    con = db()
+    rows = con.execute(
+        "SELECT severity, COUNT(*) c FROM findings WHERE submission_id=? GROUP BY severity",
+        (sid,)).fetchall()
+    score = 100
+    for r in rows:
+        if r["severity"] == "High":
+            score -= 25 * r["c"]
+        elif r["severity"] == "Medium":
+            score -= 10 * r["c"]
+        else:
+            score -= 5 * r["c"]
+    score = max(score, 0)
+    con.execute("UPDATE submissions SET score=? WHERE id=?", (score, sid))
+    con.commit()
+    con.close()
+    return score
 def db():
     con = sqlite3.connect(DB)
     con.row_factory = sqlite3.Row
@@ -76,6 +93,10 @@ def init_db():
                     ("security",
                      "Inkloom AI uses industry-standard security controls to help protect customer data.",
                      "Approved Security FAQ v1.0", now))
+    try:
+        con.execute("ALTER TABLE submissions ADD COLUMN score INTEGER")
+    except:
+        pass
     con.commit()
     con.close()
 
@@ -168,6 +189,15 @@ with tabs[0]:
         con.commit()
         con.close()
         st.session_state.last = sid
+        score = compliance_score(sid)
+        if score >= 80:
+            color = "green"
+        elif score >= 50:
+            color = "orange"
+        else:
+            color = "red"
+        st.markdown(f"## Compliance Score: <span style='color:{color}'>{score}/100</span>",
+                    unsafe_allow_html=True)
         st.success(f"Review complete. Submission ID: {sid}")
     if st.button("🤖 Suggest AI-safe rewrite"):
         prompt = f"""
@@ -267,7 +297,8 @@ with tabs[2]:
             "SELECT COUNT(*) c FROM findings WHERE submission_id=? AND status='Open' AND severity='High'",
             (s["id"],)).fetchone()["c"]
 
-        with st.expander(f"{s['title']} — {s['status']} | Open: {open_findings} | High risk: {high_risk}"):
+        score = s["score"] if s["score"] is not None else 100
+        with st.expander(f"{s['title']} — {s['status']} | Score: {score}/100 | Open: {open_findings} | High risk: {high_risk}"):
             st.markdown(s["content"])
 
             if high_risk > 0:
@@ -325,6 +356,8 @@ with tabs[3]:
     a.metric("Content reviewed", total)
     b.metric("Approved", approved)
     c.metric("Approval rate", f"{(approved / total * 100):.0f}%" if total else "0%")
+    avg = con.execute("SELECT AVG(score) a FROM submissions WHERE score IS NOT NULL").fetchone()["a"]
+    st.metric("Average compliance score", f"{avg:.0f}/100" if avg is not None else "—")
 
     if issues:
         st.bar_chart({i["category"]: i["c"] for i in issues})
