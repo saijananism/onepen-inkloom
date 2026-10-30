@@ -31,6 +31,7 @@ DB = "inkloom.db"
 APP_PASSWORD = os.getenv("APP_PASSWORD", "onepen2026")
 
 st.set_page_config(page_title="Inkloom AI", page_icon="🛡️", layout="wide")
+
 def compliance_score(sid):
     con = db()
     rows = con.execute(
@@ -49,7 +50,8 @@ def compliance_score(sid):
     con.commit()
     con.close()
     return score
-    def generate_pdf_report(sid):
+
+def generate_pdf_report(sid):
     from fpdf import FPDF
     con = db()
     s = con.execute("SELECT * FROM submissions WHERE id=?", (sid,)).fetchone()
@@ -77,6 +79,7 @@ def compliance_score(sid):
     path = f"report_{sid}.pdf"
     pdf.output(path)
     return path
+
 def db():
     con = sqlite3.connect(DB)
     con.row_factory = sqlite3.Row
@@ -353,7 +356,7 @@ with tabs[2]:
 
             if b.button("Request changes", key=f"r{s['id']}", disabled=st.session_state.role not in ["Reviewer", "Admin"]):
                 con.execute("UPDATE submissions SET status='Changes requested', updated_at=? WHERE id=?",
-                            (datetime.datetime.utcnow().isoformat(), s["id"]))
+                                (datetime.datetime.utcnow().isoformat(), s["id"]))
                 con.execute("INSERT INTO events(submission_id,actor,action,details,created_at) VALUES(?,?,?,?,?)",
                             (s["id"], "Reviewer", "Changes requested", "Reviewer asked for revisions",
                              datetime.datetime.utcnow().isoformat()))
