@@ -73,8 +73,8 @@ def generate_pdf_report(sid):
     if not findings:
         pdf.cell(0, 8, "No issues found.", ln=True)
     for f in findings:
-        pdf.multi_cell(0, 7, f"[{f['severity']}] {f['category']}: {f['explanation']}")
-        pdf.multi_cell(0, 7, f"Fix: {f['suggestion']}")
+        pdf.multi_cell(190, 7, f"[{f['severity']}] {f['category']}: {f['explanation']}")
+        pdf.multi_cell(190, 7, f"Fix: {f['suggestion']}")
         pdf.ln(2)
     path = f"report_{sid}.pdf"
     pdf.output(path)
