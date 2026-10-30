@@ -321,7 +321,14 @@ with tabs[2]:
     st.header("Approvals")
     con = db()
     submissions = con.execute("SELECT * FROM submissions ORDER BY created_at DESC").fetchall()
-
+    def risk_key(s):
+        hr = con.execute("SELECT COUNT(*) c FROM findings WHERE submission_id=? AND status='Open' AND severity='High'", (s["id"],)).fetchone()["c"]
+        return -hr
+    submissions = sorted(submissions, key=risk_key)
+    pending = [s for s in submissions if s["status"] in ("Under review", "Changes requested")]
+    high_pending = sum(1 for s in pending if risk_key(s) < 0)
+    if st.session_state.role in ("Reviewer", "Admin") and high_pending:
+        st.error(f"🔔 {high_pending} submission(s) with high-severity issues need your attention.")
     if not submissions:
         st.info("No submissions yet.")
 
